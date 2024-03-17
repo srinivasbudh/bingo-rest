@@ -10,13 +10,24 @@ public class User {
     @JsonProperty(required = true)
     private String username;
     @JsonProperty(required = true)
-    private String password;
-    @JsonProperty(required = true)
     private String firstname;
     @JsonProperty(required = true)
     private String lastname;
     @JsonProperty(required = true)
     private String mobilenumber;
+
+    @JsonProperty(required = true)
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 
     public String getUsername() {
         return username;
@@ -26,13 +37,6 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getFirstname() {
         return firstname;

@@ -10,4 +10,5 @@ import java.util.List;
 @Service
 public interface ResultRepository extends MongoRepository<Result, String> {
     List<Result> findByIsResultStatus(Boolean isResultStatus);
+    List<Result>  findByResultTypeAndContestId(String resultType, String contestId);
 }

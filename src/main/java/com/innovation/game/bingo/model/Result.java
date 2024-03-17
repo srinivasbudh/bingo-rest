@@ -10,6 +10,19 @@ public class Result {
     private Boolean isResultStatus;
     private String username;
 
+    private String contestId;
+
+    public String getContestId() {
+        return contestId;
+    }
+
+    public void setContestId(String contestId) {
+        this.contestId = contestId;
+    }
+
+
+
+
     public String getUsername() {
         return username;
     }

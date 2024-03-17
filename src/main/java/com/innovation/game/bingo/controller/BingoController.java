@@ -20,10 +20,10 @@ public class BingoController {
     private SessionService sessionService;
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public List<Integer> create(@RequestParam String sessionId) {
+    public List<Integer> create(@RequestParam String sessionId,@RequestParam String contestId ) {
         Session session = sessionService.getSession(sessionId);
         if (session != null) {
-            return bingoService.generateBingo(session.getUsername());
+            return bingoService.generateBingo(session.getUsername(),contestId);
         } else {
             return null;
         }
@@ -39,11 +39,11 @@ public class BingoController {
         }
     }
 
-    @RequestMapping(value = "count/Guest", method = RequestMethod.GET)
+   /* @RequestMapping(value = "count/Guest", method = RequestMethod.GET)
     public Long countGuest(@RequestParam String username) {
         return bingoService.getBingoCount(username );
     }
-
+*/
     @RequestMapping(value = "get", method = RequestMethod.GET)
     public List<List<Integer>> get(@RequestParam String sessionId) {
         Session session = sessionService.getSession(sessionId);
@@ -59,13 +59,13 @@ public class BingoController {
 
             return bingoService.getAllBingos(username);
     }
-    @RequestMapping(value = "create/guest", method = RequestMethod.GET)
-    public List<Integer> createAsGuest(@RequestParam String username) {
+   /* @RequestMapping(value = "create/guest", method = RequestMethod.GET)
+    public List<Integer> createAsGuest(@RequestParam String username, @RequestParam String contestId) {
         if(countGuest(username)==0){
-            return bingoService.generateBingo(username);
+            return bingoService.generateBingo(username,contestId);
         }else{
             return bingoService.getAllBingos(username).get(0);
         }
 
-    }
+    }*/
 }

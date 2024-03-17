@@ -1,9 +1,7 @@
 package com.innovation.game.bingo.service;
 
-import com.innovation.game.bingo.model.BingoResult;
-import com.innovation.game.bingo.model.Result;
-import com.innovation.game.bingo.model.ResultResponse;
-import com.innovation.game.bingo.model.YoutubeLink;
+import com.innovation.game.bingo.model.*;
+import com.innovation.game.bingo.repository.BingoRepository;
 import com.innovation.game.bingo.repository.ResultNumbersRepository;
 import com.innovation.game.bingo.repository.ResultRepository;
 import com.innovation.game.bingo.repository.YoutubeLinkRepository;
@@ -31,6 +29,9 @@ public class ResultService {
 
     @Autowired
     private ResultNumbersRepository resultNumbersRepository;
+
+    @Autowired
+    private BingoRepository bingoRepository;
 
     public Integer addBingoNumber(Integer takenBall) {
         BingoResult bingo = new BingoResult();
@@ -72,7 +73,7 @@ public class ResultService {
         return resultRepository.count();
     }
 
-    public List<String> getListOfWinners(){
+    public List<String> getListOfWinners(String contestId){
          List<Result> totalResults=resultRepository.findByIsResultStatus(true);
         List<String> resultData = new ArrayList<>();
         for(Result temp:totalResults){
@@ -112,32 +113,38 @@ public class ResultService {
         return getArrayResult();
     }
 
-    public ResultResponse getResultByUserName(String userName, String resultType){
+    public ResultResponse getResultByUserName(String userName, String resultType, String contestId){
         ResultResponse resultResponse =new ResultResponse();
         Result result=new Result();
-       List<Integer> userToken= bingoService.getAllBingos(userName).get(0);
+        List<Integer> userToken= bingoService.BingoForContest(userName,contestId).get(0);
         List<Integer> resultsToken= getArrayResult();
         if(!resultRepository.findById(resultType).isPresent()){
             System.out.println("entered 1 ");
-               List<Integer> resultStatus = validateResults.forUser(userToken,resultsToken,resultType);
-                result.setResultType(resultType);
-                result.setIsResultStatus(resultStatus.isEmpty());
-                resultResponseText(userName, resultType, resultResponse, result, resultStatus);
+            List<Integer> resultStatus = validateResults.forUser(userToken,resultsToken,resultType);
+            result.setResultType(resultType);
+            result.setIsResultStatus(resultStatus.isEmpty());
+            resultResponseText(userName, resultType, resultResponse, result, resultStatus);
 
         }else{
             result =resultRepository.findById(resultType).get();
             if(result.isResultStatus()){
+                if(result.getUsername().equalsIgnoreCase(userName)){
+                    resultResponse.setMessage("Congratulations You are the winner of "+ resultType +" Bingo");
+                    resultResponse.setUsername(result.getUsername());
+                    resultResponse.setSuccessful(true);
+                }else{
                     resultResponse.setSuccessful(false);
                     resultResponse.setMessage("Sorry we already have a winner for "+ resultType+" Bingo");
                     resultResponse.setUsername(userName);
-                }else{
+                }
+            }else{
                 System.out.println("entered 3 ");
                 List<Integer> resultStatus = validateResults.forUser(userToken,resultsToken,resultType);
-                    result.setIsResultStatus(resultStatus.isEmpty());
-                    resultResponseText(userName, resultType, resultResponse, result, resultStatus);
-                }
+                result.setIsResultStatus(resultStatus.isEmpty());
+                resultResponseText(userName, resultType, resultResponse, result, resultStatus);
             }
-            resultRepository.save(result);
+        }
+        resultRepository.save(result);
         return resultResponse;
     }
 

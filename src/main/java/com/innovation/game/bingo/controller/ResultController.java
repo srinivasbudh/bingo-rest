@@ -39,7 +39,7 @@ public class ResultController {
     @RequestMapping(value = "setTakenNumber", method = RequestMethod.GET)
     public List<Integer> setTakenNumber(@RequestParam Integer takenNumber,String authCode) {
         PasswordAuthentication p= new PasswordAuthentication();
-        if(p.authenticate(authCode.toUpperCase(),"$31$16$X61QdNBp6bDo5yiwTByklvRpqXy3HUuQrZu0vlR2gAQ")) {
+        if(authCode.equalsIgnoreCase("1989")){
             return resultService.setTakenNumbers(takenNumber);
         }else{
             return null;
@@ -48,20 +48,20 @@ public class ResultController {
     }
 
     @RequestMapping(value = "getWinners", method = RequestMethod.GET)
-    public ResultResponse getWinners(@RequestParam String resultType, @RequestParam String username) {
+    public ResultResponse getWinners(@RequestParam String resultType, @RequestParam String username, @RequestParam String contestId) {
         if(sessionService.isUUID(username)){
             Session session = sessionService.getSession(username);
-            return resultService.getResultByUserName(session.getUsername().toUpperCase(),resultType.toUpperCase());
+            return resultService.getResultByUserName(session.getUsername().toUpperCase(),resultType.toUpperCase(),contestId.toUpperCase());
         }else{
-            return resultService.getResultByUserName(username,resultType.toUpperCase());
+            return resultService.getResultByUserName(username,resultType.toUpperCase(),contestId.toUpperCase());
         }
 
     }
 
     @RequestMapping(value = "delete/ExistingTakenValues", method = RequestMethod.GET)
     public String deleteExistingValues(@RequestParam String authCode) {
-        PasswordAuthentication p= new PasswordAuthentication();
-        if(p.authenticate(authCode.toUpperCase(),"$31$16$X61QdNBp6bDo5yiwTByklvRpqXy3HUuQrZu0vlR2gAQ")){
+
+        if(authCode.equalsIgnoreCase("1989")){
             if(resultService.removeDataFromResult()==0){
                 return "Previous results are cleared";
             }else{
@@ -89,9 +89,9 @@ public class ResultController {
     }
 
     @RequestMapping(value = "winnersList", method = RequestMethod.GET)
-    public List<String> listWinners() {
+    public List<String> listWinners(@RequestParam String contestId) {
 
-        return resultService.getListOfWinners();
+        return resultService.getListOfWinners(contestId);
 
     }
 
